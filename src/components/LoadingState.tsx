@@ -5,7 +5,7 @@ interface LoadingStateProps {
   message?: string;
 }
 
-const LoadingState: React.FC<LoadingStateProps> = ({ message = 'Loading...' }) => {
+const LoadingState: React.FC<LoadingStateProps> = ({ message = 'Carregando...' }) => {
   return (
     <div className="flex flex-col items-center justify-center py-12">
       <div className="relative w-24 h-24">

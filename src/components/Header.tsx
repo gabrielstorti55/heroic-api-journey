@@ -24,7 +24,7 @@ const Header: React.FC<HeaderProps> = ({ transparent = false }) => {
               className="w-10 h-10 object-cover" 
             />
           </div>
-          <h1 className="text-2xl font-bold tracking-wider text-white">MARVEL <span className="text-marvel-red">CHARACTERS</span></h1>
+          <h1 className="text-2xl font-bold tracking-wider text-white">HERÓIS <span className="text-marvel-red">MARVEL</span></h1>
         </Link>
         
         <nav>
@@ -34,7 +34,7 @@ const Header: React.FC<HeaderProps> = ({ transparent = false }) => {
                 to="/" 
                 className="text-white opacity-80 hover:opacity-100 transition-opacity font-medium"
               >
-                CHARACTERS
+                PERSONAGENS
               </Link>
             </li>
             <li>
@@ -42,7 +42,7 @@ const Header: React.FC<HeaderProps> = ({ transparent = false }) => {
                 to="/favorites" 
                 className="text-white opacity-80 hover:opacity-100 transition-opacity font-medium"
               >
-                FAVORITES
+                FAVORITOS
               </Link>
             </li>
           </ul>

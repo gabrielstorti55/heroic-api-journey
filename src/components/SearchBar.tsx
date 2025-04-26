@@ -34,7 +34,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, initialQuery = '' }) =>
       >
         <input
           type="text"
-          placeholder="Search Marvel characters..."
+          placeholder="Buscar personagens Marvel..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => setIsFocused(true)}
@@ -47,7 +47,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, initialQuery = '' }) =>
             type="button"
             onClick={handleClear}
             className="absolute right-14 text-gray-400 hover:text-white transition-colors"
-            aria-label="Clear search"
+            aria-label="Limpar busca"
           >
             <X size={18} />
           </button>
@@ -56,7 +56,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, initialQuery = '' }) =>
         <button
           type="submit"
           className="bg-marvel-red h-full px-5 text-white transition-colors hover:bg-marvel-darkRed"
-          aria-label="Search"
+          aria-label="Buscar"
         >
           <Search size={20} />
         </button>

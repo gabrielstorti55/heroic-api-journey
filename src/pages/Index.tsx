@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { fetchCharacters, MarvelCharacter } from '@/services/marvelAPI';
 import CharacterCard from '@/components/CharacterCard';
@@ -16,7 +15,6 @@ const Index: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   
-  // Get query params
   const queryParams = new URLSearchParams(location.search);
   const initialPage = parseInt(queryParams.get('page') || '1', 10);
   const initialQuery = queryParams.get('query') || '';
@@ -28,7 +26,6 @@ const Index: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>(initialQuery);
   const [hasScrolled, setHasScrolled] = useState(false);
   
-  // Update URL when page or search query changes
   useEffect(() => {
     const params = new URLSearchParams();
     if (currentPage > 1) {
@@ -42,7 +39,6 @@ const Index: React.FC = () => {
     navigate(newUrl, { replace: true });
   }, [currentPage, searchQuery, navigate, location.pathname]);
   
-  // Fetch characters
   useEffect(() => {
     const getCharacters = async () => {
       setLoading(true);
@@ -67,19 +63,16 @@ const Index: React.FC = () => {
     getCharacters();
   }, [currentPage, searchQuery, toast]);
   
-  // Handle page change
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
   
-  // Handle search
   const handleSearch = (query: string) => {
     setSearchQuery(query);
     setCurrentPage(1);
   };
   
-  // Header transparency effect
   useEffect(() => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY;
@@ -94,7 +87,6 @@ const Index: React.FC = () => {
     <div className="min-h-screen bg-marvel-black pb-20">
       <Header transparent={!hasScrolled} />
       
-      {/* Hero Section */}
       <div 
         className="relative h-[50vh] min-h-[400px] flex items-center justify-center bg-gradient-to-b from-marvel-black via-marvel-black/90 to-marvel-black"
         style={{
@@ -106,20 +98,19 @@ const Index: React.FC = () => {
       >
         <div className="container px-4 pt-20 text-center relative z-10 animate-fade-in">
           <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
-            MARVEL <span className="text-marvel-red">CHARACTERS</span>
+            PERSONAGENS <span className="text-marvel-red">MARVEL</span>
           </h1>
           <p className="text-xl text-white/80 max-w-3xl mx-auto mb-8">
-            Find information about your favorite Marvel characters and discover new ones.
+            Encontre informações sobre seus personagens favoritos da Marvel e descubra novos.
           </p>
           
           <SearchBar onSearch={handleSearch} initialQuery={searchQuery} />
         </div>
       </div>
       
-      {/* Characters Grid */}
       <div className="container px-4 py-12">
         {loading ? (
-          <LoadingState message="Assembling heroes..." />
+          <LoadingState message="Reunindo heróis..." />
         ) : characters.length > 0 ? (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 animate-fade-in">
@@ -137,13 +128,13 @@ const Index: React.FC = () => {
           </>
         ) : (
           <div className="text-center py-12">
-            <h2 className="text-2xl font-bold text-white mb-4">No characters found</h2>
-            <p className="text-white/70 mb-6">Try a different search term or browse all characters.</p>
+            <h2 className="text-2xl font-bold text-white mb-4">Nenhum personagem encontrado</h2>
+            <p className="text-white/70 mb-6">Tente um termo diferente ou navegue por todos os personagens.</p>
             <button 
               onClick={() => handleSearch('')}
               className="marvel-button"
             >
-              View All Characters
+              Ver Todos os Personagens
             </button>
           </div>
         )}

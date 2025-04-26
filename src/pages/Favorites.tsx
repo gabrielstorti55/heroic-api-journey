@@ -9,7 +9,6 @@ const Favorites: React.FC = () => {
   const { toast } = useToast();
   const [hasScrolled, setHasScrolled] = useState(false);
   
-  // Header transparency effect
   useEffect(() => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY;
@@ -36,10 +35,10 @@ const Favorites: React.FC = () => {
       >
         <div className="container px-4 pt-20 text-center relative z-10 animate-fade-in">
           <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
-            YOUR <span className="text-marvel-red">FAVORITES</span>
+            SEUS <span className="text-marvel-red">FAVORITOS</span>
           </h1>
           <p className="text-xl text-white/80 max-w-3xl mx-auto">
-            This is where your favorite Marvel characters will be saved.
+            Aqui é onde seus personagens favoritos da Marvel serão salvos.
           </p>
         </div>
       </div>
@@ -51,13 +50,13 @@ const Favorites: React.FC = () => {
             <Heart className="w-10 h-10 text-marvel-red" />
           </div>
           
-          <h2 className="text-2xl font-bold text-white mb-4">No Favorites Yet</h2>
+          <h2 className="text-2xl font-bold text-white mb-4">Nenhum Favorito Ainda</h2>
           <p className="text-white/70 mb-8">
-            To add characters to your favorites, browse the character listing and click the heart icon or the "Add to Favorites" button on character details.
+            Para adicionar personagens aos favoritos, navegue pela lista de personagens e clique no ícone de coração ou no botão "Adicionar aos Favoritos" nos detalhes do personagem.
           </p>
           
           <Link to="/" className="marvel-button inline-block">
-            Browse Characters
+            Explorar Personagens
           </Link>
         </div>
       </div>

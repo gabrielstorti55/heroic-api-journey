@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { fetchCharacterById, MarvelCharacter } from '@/services/marvelAPI';
@@ -29,19 +28,19 @@ const CharacterDetails: React.FC = () => {
         if (data) {
           setCharacter(data);
         } else {
-          setError('Character not found');
+          setError('Personagem não encontrado');
           toast({
-            title: "Error",
-            description: "Character not found",
+            title: "Erro",
+            description: "Personagem não encontrado",
             variant: "destructive",
           });
         }
       } catch (error) {
-        console.error('Error fetching character:', error);
-        setError('Failed to load character data');
+        console.error('Erro ao carregar dados do personagem:', error);
+        setError('Falha ao carregar dados do personagem. Por favor, tente novamente.');
         toast({
-          title: "Error",
-          description: "Failed to load character data. Please try again.",
+          title: "Erro",
+          description: "Falha ao carregar dados do personagem. Por favor, tente novamente.",
           variant: "destructive",
         });
       } finally {
@@ -55,8 +54,8 @@ const CharacterDetails: React.FC = () => {
   const handleFavoriteToggle = () => {
     setIsFavorite(!isFavorite);
     toast({
-      title: isFavorite ? "Removed from favorites" : "Added to favorites",
-      description: `${character?.name} has been ${isFavorite ? "removed from" : "added to"} your favorites`,
+      title: isFavorite ? "Removido dos favoritos" : "Adicionado aos favoritos",
+      description: `${character?.name} foi ${isFavorite ? "removido dos" : "adicionado aos"} seus favoritos`,
     });
   };
   
@@ -64,7 +63,7 @@ const CharacterDetails: React.FC = () => {
     return (
       <div className="min-h-screen bg-marvel-black flex items-center justify-center">
         <Header />
-        <LoadingState message="Loading character data..." />
+        <LoadingState message="Carregando dados do personagem..." />
       </div>
     );
   }
@@ -74,13 +73,13 @@ const CharacterDetails: React.FC = () => {
       <div className="min-h-screen bg-marvel-black">
         <Header />
         <div className="container px-4 py-24 text-center">
-          <h2 className="text-2xl font-bold text-white mb-4">Character Not Found</h2>
+          <h2 className="text-2xl font-bold text-white mb-4">Personagem Não Encontrado</h2>
           <p className="text-white/70 mb-6">
-            We couldn't find the character you're looking for.
+            Não conseguimos encontrar o personagem que você está procurando.
           </p>
           <Link to="/" className="marvel-button inline-block">
             <ArrowLeft size={16} className="inline mr-2" />
-            Back to Characters
+            Voltar para Personagens
           </Link>
         </div>
       </div>
@@ -150,7 +149,7 @@ const CharacterDetails: React.FC = () => {
                 )}
               >
                 <Heart className={cn(isFavorite && "fill-white")} size={18} />
-                {isFavorite ? "Remove from Favorites" : "Add to Favorites"}
+                {isFavorite ? "Remover dos Favoritos" : "Adicionar aos Favoritos"}
               </button>
               
               {/* Back to characters */}
@@ -159,7 +158,7 @@ const CharacterDetails: React.FC = () => {
                 className="w-full mt-4 hidden md:flex items-center justify-center gap-2 py-3 rounded-lg bg-marvel-gray text-white hover:bg-marvel-darkGray transition-all font-medium"
               >
                 <ArrowLeft size={18} />
-                Back to Characters
+                Voltar para Personagens
               </Link>
             </div>
             
@@ -170,21 +169,21 @@ const CharacterDetails: React.FC = () => {
               {character.description ? (
                 <p className="text-white/80 text-lg mb-8">{character.description}</p>
               ) : (
-                <p className="text-white/60 text-lg mb-8 italic">No description available.</p>
+                <p className="text-white/60 text-lg mb-8 italic">Nenhuma descrição disponível.</p>
               )}
               
               {/* Stats */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                 <Stat 
                   icon={<BookOpen className="text-marvel-red" size={24} />}
-                  label="Comics"
+                  label="Quadrinhos"
                   value={character.comics.available}
                   items={character.comics.items.slice(0, 3).map(c => c.name)}
                 />
                 
                 <Stat 
                   icon={<Film className="text-marvel-red" size={24} />}
-                  label="Series"
+                  label="Séries"
                   value={character.series.available}
                   items={character.series.items.slice(0, 3).map(s => s.name)}
                 />
@@ -193,20 +192,37 @@ const CharacterDetails: React.FC = () => {
               {/* External links */}
               {character.urls.length > 0 && (
                 <div className="mt-6">
-                  <h3 className="text-white text-lg font-semibold mb-3">External Links</h3>
+                  <h3 className="text-white text-lg font-semibold mb-3">Links Externos</h3>
                   <div className="flex flex-wrap gap-4">
-                    {character.urls.map((url, index) => (
-                      <a
-                        key={index}
-                        href={url.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="bg-marvel-gray hover:bg-marvel-darkGray text-white py-2 px-4 rounded-lg flex items-center gap-2 transition-colors"
-                      >
-                        <ExternalLink size={16} />
-                        {url.type.charAt(0).toUpperCase() + url.type.slice(1)}
-                      </a>
-                    ))}
+                    {character.urls.map((url, index) => {
+                      let label = url.type;
+                      switch (url.type) {
+                        case 'detail':
+                          label = 'Detalhes';
+                          break;
+                        case 'wiki':
+                          label = 'Wiki';
+                          break;
+                        case 'comiclink':
+                          label = 'Quadrinhos';
+                          break;
+                        default:
+                          label = url.type.charAt(0).toUpperCase() + url.type.slice(1);
+                      }
+                      
+                      return (
+                        <a
+                          key={index}
+                          href={url.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="bg-marvel-gray hover:bg-marvel-darkGray text-white py-2 px-4 rounded-lg flex items-center gap-2 transition-colors"
+                        >
+                          <ExternalLink size={16} />
+                          {label}
+                        </a>
+                      );
+                    })}
                   </div>
                 </div>
               )}
@@ -245,12 +261,12 @@ const Stat: React.FC<StatProps> = ({ icon, label, value, items }) => {
           ))}
           {value > items.length && (
             <li className="text-white/50 italic text-sm mt-1">
-              And {value - items.length} more...
+              E {value - items.length} mais...
             </li>
           )}
         </ul>
       ) : (
-        <p className="text-white/50 italic">No {label.toLowerCase()} available</p>
+        <p className="text-white/50 italic">Nenhuma {label.toLowerCase()} disponível</p>
       )}
     </div>
   );
