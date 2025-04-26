@@ -1,9 +1,11 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { MarvelCharacter } from '@/services/marvelAPI';
 import { Heart } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { isFavorite, toggleFavorite } from '@/services/favoritesService';
+import { useToast } from '@/components/ui/use-toast';
 
 interface CharacterCardProps {
   character: MarvelCharacter;
@@ -11,17 +13,31 @@ interface CharacterCardProps {
 
 const CharacterCard: React.FC<CharacterCardProps> = ({ character }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
-  const [isFavorite, setIsFavorite] = useState(false);
+  const [isFav, setIsFav] = useState(false);
+  const { toast } = useToast();
   
   // Get image URL
   const imageUrl = `${character.thumbnail.path}.${character.thumbnail.extension}`;
   const isImageNotAvailable = character.thumbnail.path.includes('image_not_available');
   
+  // Verificar se o personagem está nos favoritos ao carregar
+  useEffect(() => {
+    setIsFav(isFavorite(character.id));
+  }, [character.id]);
+  
   // Handle favorite toggle
   const handleFavoriteToggle = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setIsFavorite(!isFavorite);
+    
+    const newState = toggleFavorite(character.id);
+    setIsFav(newState);
+    
+    // Mostrar notificação
+    toast({
+      title: newState ? "Adicionado aos favoritos" : "Removido dos favoritos",
+      description: `${character.name} foi ${newState ? "adicionado aos" : "removido dos"} seus favoritos`,
+    });
   };
 
   return (
@@ -52,12 +68,12 @@ const CharacterCard: React.FC<CharacterCardProps> = ({ character }) => {
         <button 
           className="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center transition-all duration-300 hover:bg-marvel-red"
           onClick={handleFavoriteToggle}
-          aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+          aria-label={isFav ? "Remover dos favoritos" : "Adicionar aos favoritos"}
         >
           <Heart 
             className={cn(
               "w-5 h-5 transition-all duration-300",
-              isFavorite ? "fill-white text-white" : "text-white"
+              isFav ? "fill-white text-white" : "text-white"
             )} 
           />
         </button>
@@ -69,7 +85,7 @@ const CharacterCard: React.FC<CharacterCardProps> = ({ character }) => {
         
         {/* Details button */}
         <div className="absolute bottom-0 left-0 right-0 p-4 opacity-0 transform translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
-          <button className="marvel-button w-full">Details</button>
+          <button className="marvel-button w-full">Detalhes</button>
         </div>
       </div>
     </Link>

@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils';
 import CharacterStats from '@/components/character/CharacterStats';
 import CharacterExternalLinks from '@/components/character/CharacterExternalLinks';
 import CharacterHero from '@/components/character/CharacterHero';
+import { isFavorite, toggleFavorite } from '@/services/favoritesService';
 
 const CharacterDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -17,7 +18,7 @@ const CharacterDetails: React.FC = () => {
   const [character, setCharacter] = useState<MarvelCharacter | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [isFavorite, setIsFavorite] = useState<boolean>(false);
+  const [isFav, setIsFav] = useState<boolean>(false);
   const [imageLoaded, setImageLoaded] = useState<boolean>(false);
   
   useEffect(() => {
@@ -31,6 +32,7 @@ const CharacterDetails: React.FC = () => {
         
         if (data) {
           setCharacter(data);
+          setIsFav(isFavorite(characterId));
         } else {
           setError('Personagem não encontrado');
           toast({
@@ -56,11 +58,14 @@ const CharacterDetails: React.FC = () => {
   }, [id, toast]);
   
   const handleFavoriteToggle = () => {
-    setIsFavorite(!isFavorite);
-    toast({
-      title: isFavorite ? "Removido dos favoritos" : "Adicionado aos favoritos",
-      description: `${character?.name} foi ${isFavorite ? "removido dos" : "adicionado aos"} seus favoritos`,
-    });
+    if (character) {
+      const newState = toggleFavorite(character.id);
+      setIsFav(newState);
+      toast({
+        title: newState ? "Adicionado aos favoritos" : "Removido dos favoritos",
+        description: `${character.name} foi ${newState ? "adicionado aos" : "removido dos"} seus favoritos`,
+      });
+    }
   };
   
   if (loading) {
@@ -119,13 +124,13 @@ const CharacterDetails: React.FC = () => {
               onClick={handleFavoriteToggle}
               className={cn(
                 "w-full mt-4 flex items-center justify-center gap-2 py-3 rounded-lg font-medium transition-all",
-                isFavorite
+                isFav
                   ? "bg-marvel-darkRed text-white"
                   : "bg-marvel-red text-white hover:bg-marvel-darkRed"
               )}
             >
-              <Heart className={cn(isFavorite && "fill-white")} size={18} />
-              {isFavorite ? "Remover dos Favoritos" : "Adicionar aos Favoritos"}
+              <Heart className={cn(isFav && "fill-white")} size={18} />
+              {isFav ? "Remover dos Favoritos" : "Adicionar aos Favoritos"}
             </button>
             
             {/* Back to characters */}
