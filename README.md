@@ -84,7 +84,7 @@ A aplicação está disponível online em: [URL_DO_SEU_DEPLOY]
 
 
 ### Favoritos
-![Print da Tela Favoritos](./public/favoritos.png.png)
+![Print da Tela Favoritos](./public/favoritos.png)
 
 
 ## ✨ Créditos
