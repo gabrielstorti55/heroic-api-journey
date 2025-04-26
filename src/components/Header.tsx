@@ -19,8 +19,8 @@ const Header: React.FC<HeaderProps> = ({ transparent = false }) => {
         <Link to="/" className="flex items-center gap-4">
           <div className="relative overflow-hidden rounded-full border-2 border-marvel-red p-1 bg-white">
             <img 
-              src="/lovable-uploads/608694bd-9b56-440c-8b3f-5f52477ecc27.png" 
-              alt="Marvel API"
+              src="/library/marvel.webp"
+              alt="Marvel Logo" 
               className="w-10 h-10 object-cover" 
             />
           </div>
