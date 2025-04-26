@@ -64,7 +64,7 @@ O projeto estará disponível em `http://localhost:5173`
 
 ## 🌐 Deploy
 
-A aplicação está disponível online em: [URL_DO_SEU_DEPLOY]
+A aplicação está disponível online em: https://heroes-api.netlify.app
 
 ## 📸 Screenshots
 
