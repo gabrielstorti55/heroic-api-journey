@@ -1,69 +1,97 @@
-# Welcome to your Lovable project
 
-## Project info
+# Marvel Heroes App 🦸‍♂️
 
-**URL**: https://lovable.dev/projects/9428813f-1565-487d-a77d-5ff878125a20
+## 📝 Sobre o Projeto
 
-## How can I edit this code?
+Este projeto é uma aplicação web desenvolvida em React que consome a API da Marvel para exibir informações sobre personagens do universo Marvel. A aplicação permite visualizar personagens, pesquisar por nome, ver detalhes específicos e gerenciar uma lista de favoritos.
 
-There are several ways of editing your application.
+![Preview da Aplicação](https://terrigen-cdn-dev.marvel.com/content/prod/1x/sre_mas-mp_imgtopper_gradientoverlay_10.jpg)
 
-**Use Lovable**
+## 🚀 Funcionalidades
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/9428813f-1565-487d-a77d-5ff878125a20) and start prompting.
+- **Lista de Personagens**: Visualize todos os personagens da Marvel com paginação
+- **Pesquisa**: Busque personagens específicos pelo nome
+- **Detalhes**: Acesse informações detalhadas de cada personagem
+- **Favoritos**: Adicione e remova personagens da sua lista de favoritos
+- **Rotas Dinâmicas**: Navegação entre páginas usando React Router
 
-Changes made via Lovable will be committed automatically to this repo.
+## 🛠️ Tecnologias Utilizadas
 
-**Use your preferred IDE**
+- React 18 com TypeScript
+- Vite (bundler)
+- React Router DOM (rotas)
+- TanStack Query (gerenciamento de estado e cache)
+- Tailwind CSS (estilização)
+- Shadcn/UI (componentes)
+- Lucide React (ícones)
+- API Marvel Comics
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## ⚙️ Como Executar o Projeto
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### Pré-requisitos
+- Node.js instalado (versão 16 ou superior)
+- NPM ou Yarn
 
-Follow these steps:
+### Instalação
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+1. Clone o repositório:
+```bash
+git clone [URL_DO_SEU_REPOSITÓRIO]
+```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+2. Entre no diretório do projeto:
+```bash
+cd marvel-heroes
+```
 
-# Step 3: Install the necessary dependencies.
-npm i
+3. Instale as dependências:
+```bash
+npm install
+```
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+4. Configure as variáveis de ambiente:
+Crie um arquivo `.env` na raiz do projeto e adicione suas chaves da API Marvel:
+```env
+VITE_MARVEL_PUBLIC_KEY=sua_chave_publica_aqui
+VITE_MARVEL_PRIVATE_KEY=sua_chave_privada_aqui
+```
+
+5. Inicie o servidor de desenvolvimento:
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+O projeto estará disponível em `http://localhost:5173`
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## 📱 Rotas da Aplicação
 
-**Use GitHub Codespaces**
+- `/` - Página inicial com lista de personagens
+- `/character/:id` - Página de detalhes do personagem
+- `/favorites` - Página de personagens favoritos
+- `*` - Página 404 para rotas não encontradas
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## 🌐 Deploy
 
-## What technologies are used for this project?
+A aplicação está disponível online em: [URL_DO_SEU_DEPLOY]
 
-This project is built with .
+## 📸 Screenshots
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### Página Inicial
+[Adicionar screenshot da página inicial]
 
-## How can I deploy this project?
+### Detalhes do Personagem
+[Adicionar screenshot da página de detalhes]
 
-Simply open [Lovable](https://lovable.dev/projects/9428813f-1565-487d-a77d-5ff878125a20) and click on Share -> Publish.
+### Favoritos
+[Adicionar screenshot da página de favoritos]
 
-## I want to use a custom domain - is that possible?
+## 📄 Licença
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+## ✨ Créditos
+
+Desenvolvido por [SEU_NOME] como projeto para a disciplina [NOME_DA_DISCIPLINA].
+
+Dados fornecidos pela [Marvel Comics API](https://developer.marvel.com).
+
