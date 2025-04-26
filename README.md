@@ -86,13 +86,10 @@ A aplicação está disponível online em: [URL_DO_SEU_DEPLOY]
 ### Favoritos
 ![Print da Tela Favoritos](./public/favoritos.png.png)
 
-## 📄 Licença
-
-Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
 
 ## ✨ Créditos
 
-Desenvolvido por [SEU_NOME] como projeto para a disciplina [NOME_DA_DISCIPLINA].
+Desenvolvido por Gabriel Storti Segalla
 
 Dados fornecidos pela [Marvel Comics API](https://developer.marvel.com).
 
