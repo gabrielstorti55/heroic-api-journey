@@ -5,7 +5,6 @@
 
 Este projeto é uma aplicação web desenvolvida em React que consome a API da Marvel para exibir informações sobre personagens do universo Marvel. A aplicação permite visualizar personagens, pesquisar por nome, ver detalhes específicos e gerenciar uma lista de favoritos.
 
-![Preview da Aplicação](https://terrigen-cdn-dev.marvel.com/content/prod/1x/sre_mas-mp_imgtopper_gradientoverlay_10.jpg)
 
 ## 🚀 Funcionalidades
 
@@ -77,13 +76,15 @@ A aplicação está disponível online em: [URL_DO_SEU_DEPLOY]
 ## 📸 Screenshots
 
 ### Página Inicial
-[Adicionar screenshot da página inicial]
+![Print da Tela Inicial](./public/tela-inicial.png)
+
 
 ### Detalhes do Personagem
-[Adicionar screenshot da página de detalhes]
+![Print da Tela Detalhe do Personagem](./public/detalhe-personagem.png)
+
 
 ### Favoritos
-[Adicionar screenshot da página de favoritos]
+![Print da Tela Favoritos](./public/favoritos.png.png)
 
 ## 📄 Licença
 
