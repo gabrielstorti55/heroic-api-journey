@@ -57,61 +57,74 @@ const PUBLIC_KEY = 'fec5b9e955afd364fefb2012d17b38db';
 const PRIVATE_KEY = 'f0516e61f8991a915431c7f7b5eab6f6220cfc3d';
 
 // Generate timestamp and hash for Marvel API authentication
-const generateAuthParams = (): string => {
-  const timestamp = new Date().getTime().toString();
-  const hash = MD5(timestamp + PRIVATE_KEY + PUBLIC_KEY).toString();
-  return `ts=${timestamp}&apikey=${PUBLIC_KEY}&hash=${hash}`;
+const generateAuthParams = (): { ts: number; apiKey: string; hash: string } => {
+  const ts = Date.now();
+  const hash = MD5(`${ts}${PRIVATE_KEY}${PUBLIC_KEY}`).toString();
+  
+  return {
+    ts,
+    apiKey: PUBLIC_KEY,
+    hash,
+  };
 };
 
-// Fetch characters from Marvel API
+// Fetch characters with optional search query and pagination
 export const fetchCharacters = async (
-  offset = 0,
-  limit = 20,
+  offset: number = 0, 
+  limit: number = 20, 
   nameStartsWith?: string
-): Promise<MarvelApiResponse> => {
+): Promise<{ data: { results: MarvelCharacter[]; total: number } }> => {
+  const { ts, apiKey, hash } = generateAuthParams();
+  
+  const params = new URLSearchParams({
+    ts: ts.toString(),
+    apiKey,
+    hash,
+    offset: offset.toString(),
+    limit: limit.toString(),
+    ...(nameStartsWith && { nameStartsWith }),
+  });
+
   try {
-    let url = `${API_BASE_URL}/characters?${generateAuthParams()}&offset=${offset}&limit=${limit}&orderBy=name`;
+    const response = await fetch(`${API_BASE_URL}/characters?${params}`);
     
-    if (nameStartsWith && nameStartsWith.trim() !== '') {
-      url += `&nameStartsWith=${encodeURIComponent(nameStartsWith)}`;
-    }
-    
-    const response = await fetch(url);
     if (!response.ok) {
-      throw new Error(`Marvel API error: ${response.status}`);
+      const errorData = await response.text();
+      throw new Error(`Marvel API error: ${response.status} - ${errorData}`);
     }
     
-    return await response.json();
+    const data = await response.json();
+    return data.data;
   } catch (error) {
     console.error('Error fetching Marvel characters:', error);
-    // Return a mock response for development if API keys are not set
-    if (PUBLIC_KEY === 'YOUR_PUBLIC_KEY' || PRIVATE_KEY === 'YOUR_PRIVATE_KEY') {
-      return getMockCharacters(offset, limit, nameStartsWith);
-    }
     throw error;
   }
 };
 
 // Fetch a single character by ID
-export const fetchCharacterById = async (characterId: number): Promise<MarvelCharacter | null> => {
+export const fetchCharacterById = async (
+  characterId: number
+): Promise<MarvelCharacter | null> => {
+  const { ts, apiKey, hash } = generateAuthParams();
+  
+  const params = new URLSearchParams({
+    ts: ts.toString(),
+    apiKey,
+    hash,
+  });
+
   try {
-    const url = `${API_BASE_URL}/characters/${characterId}?${generateAuthParams()}`;
-    const response = await fetch(url);
+    const response = await fetch(`${API_BASE_URL}/characters/${characterId}?${params}`);
     
     if (!response.ok) {
-      throw new Error(`Marvel API error: ${response.status}`);
+      const errorData = await response.text();
+      throw new Error(`Marvel API error: ${response.status} - ${errorData}`);
     }
     
-    const data: MarvelApiResponse = await response.json();
+    const data = await response.json();
     return data.data.results[0] || null;
   } catch (error) {
-    console.error(`Error fetching Marvel character with ID ${characterId}:`, error);
-    // Return mock data for development if API keys are not set
-    if (PUBLIC_KEY === 'YOUR_PUBLIC_KEY' || PRIVATE_KEY === 'YOUR_PRIVATE_KEY') {
-      const mockData = getMockCharacters(0, 100);
-      const character = mockData.data.results.find(char => char.id === characterId);
-      return character || null;
-    }
+    console.error('Error fetching character by ID:', error);
     throw error;
   }
 };
