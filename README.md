@@ -35,12 +35,12 @@ Este projeto é uma aplicação web desenvolvida em React que consome a API da M
 
 1. Clone o repositório:
 ```bash
-git clone [URL_DO_SEU_REPOSITÓRIO]
+git clone 
 ```
 
 2. Entre no diretório do projeto:
 ```bash
-cd marvel-heroes
+cd .\heroic-api-journey\
 ```
 
 3. Instale as dependências:
@@ -59,8 +59,6 @@ VITE_MARVEL_PRIVATE_KEY=sua_chave_privada_aqui
 ```bash
 npm run dev
 ```
-
-O projeto estará disponível em `http://localhost:5173`
 
 ## 📱 Rotas da Aplicação
 
