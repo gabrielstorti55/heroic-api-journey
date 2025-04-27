@@ -1,3 +1,4 @@
+// marvelApi.ts
 import { MD5 } from 'crypto-js';
 
 // Interfaces para o retorno da API
@@ -45,76 +46,54 @@ const API_BASE_URL = 'https://gateway.marvel.com/v1/public';
 const PUBLIC_KEY = 'fec5b9e955afd364fefb2012d17b38db';
 const PRIVATE_KEY = 'f0516e61f8991a915431c7f7b5eab6f6220cfc3d';
 
-// Generate timestamp and hash for Marvel API authentication
-const generateAuthParams = (): { ts: number; apiKey: string; hash: string } => {
-  const ts = Date.now();
-  const hash = MD5(`${ts}${PRIVATE_KEY}${PUBLIC_KEY}`).toString();
-  
-  return {
-    ts,
-    apiKey: PUBLIC_KEY,
-    hash,
-  };
+// Gera os parâmetros de autenticação (timestamp, public key e hash)
+const generateAuthParams = (): string => {
+  const timestamp = new Date().getTime().toString();
+  const hash = MD5(timestamp + PRIVATE_KEY + PUBLIC_KEY).toString();
+  return `ts=${timestamp}&apikey=${PUBLIC_KEY}&hash=${hash}`;
 };
 
-// Fetch characters with optional search query and pagination
+// Função para buscar personagens
 export const fetchCharacters = async (
-  offset: number = 0, 
-  limit: number = 20, 
+  offset = 0,
+  limit = 20,
   nameStartsWith?: string
-): Promise<{ data: { results: MarvelCharacter[]; total: number } }> => {
-  const { ts, apiKey, hash } = generateAuthParams();
-  
-  const params = new URLSearchParams({
-    ts: ts.toString(),
-    apiKey,
-    hash,
-    offset: offset.toString(),
-    limit: limit.toString(),
-    ...(nameStartsWith && { nameStartsWith }),
-  });
-
+): Promise<MarvelApiResponse> => {
   try {
-    const response = await fetch(`${API_BASE_URL}/characters?${params}`);
-    
-    if (!response.ok) {
-      const errorData = await response.text();
-      throw new Error(`Marvel API error: ${response.status} - ${errorData}`);
+    let url = `${API_BASE_URL}/characters?${generateAuthParams()}&offset=${offset}&limit=${limit}&orderBy=name`;
+
+    if (nameStartsWith && nameStartsWith.trim() !== '') {
+      url += `&nameStartsWith=${encodeURIComponent(nameStartsWith)}`;
     }
-    
-    const data = await response.json();
-    return data.data;
+
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Marvel API error: ${response.status}`);
+    }
+
+    return await response.json();
   } catch (error) {
     console.error('Error fetching Marvel characters:', error);
-    throw error;
+    return getMockCharacters(offset, limit, nameStartsWith); // Retorna mock em caso de erro
   }
 };
 
-// Fetch a single character by ID
-export const fetchCharacterById = async (
-  characterId: number
-): Promise<MarvelCharacter | null> => {
-  const { ts, apiKey, hash } = generateAuthParams();
-  
-  const params = new URLSearchParams({
-    ts: ts.toString(),
-    apiKey,
-    hash,
-  });
-
+// Função para buscar um personagem específico pelo ID
+export const fetchCharacterById = async (characterId: number): Promise<MarvelCharacter | null> => {
   try {
-    const response = await fetch(`${API_BASE_URL}/characters/${characterId}?${params}`);
-    
+    const url = `${API_BASE_URL}/characters/${characterId}?${generateAuthParams()}`;
+    const response = await fetch(url);
+
     if (!response.ok) {
-      const errorData = await response.text();
-      throw new Error(`Marvel API error: ${response.status} - ${errorData}`);
+      throw new Error(`Marvel API error: ${response.status}`);
     }
-    
-    const data = await response.json();
+
+    const data: MarvelApiResponse = await response.json();
     return data.data.results[0] || null;
   } catch (error) {
-    console.error('Error fetching character by ID:', error);
-    throw error;
+    console.error(`Error fetching Marvel character with ID ${characterId}:`, error);
+    const mockData = getMockCharacters(0, 100);
+    return mockData.data.results.find(char => char.id === characterId) || null;
   }
 };
 
