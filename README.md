@@ -35,7 +35,7 @@ Este projeto é uma aplicação web desenvolvida em React que consome a API da M
 
 1. Clone o repositório:
 ```bash
-git clone [URL_DO_SEU_REPOSITÓRIO]
+git clone https://github.com/gabrielstorti55/heroic-api-journey.git
 ```
 
 2. Entre no diretório do projeto:
@@ -48,14 +48,7 @@ cd marvel-heroes
 npm install
 ```
 
-4. Configure as variáveis de ambiente:
-Crie um arquivo `.env` na raiz do projeto e adicione suas chaves da API Marvel:
-```env
-VITE_MARVEL_PUBLIC_KEY=sua_chave_publica_aqui
-VITE_MARVEL_PRIVATE_KEY=sua_chave_privada_aqui
-```
-
-5. Inicie o servidor de desenvolvimento:
+4. Inicie o servidor de desenvolvimento:
 ```bash
 npm run dev
 ```
@@ -71,7 +64,7 @@ O projeto estará disponível em `http://localhost:5173`
 
 ## 🌐 Deploy
 
-A aplicação está disponível online em: [URL_DO_SEU_DEPLOY]
+A aplicação está disponível online em: https://heroes-api.netlify.app
 
 ## 📸 Screenshots
 
