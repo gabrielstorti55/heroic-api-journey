@@ -1,4 +1,3 @@
-
 import { MD5 } from 'crypto-js';
 
 export interface MarvelCharacter {
@@ -54,8 +53,8 @@ export interface MarvelApiResponse {
 
 // Marvel API credentials
 const API_BASE_URL = 'https://gateway.marvel.com/v1/public';
-const PUBLIC_KEY = 'YOUR_PUBLIC_KEY'; // You need to replace this with your Marvel API public key
-const PRIVATE_KEY = 'YOUR_PRIVATE_KEY'; // You need to replace this with your Marvel API private key
+const PUBLIC_KEY = 'fec5b9e955afd364fefb2012d17b38db';
+const PRIVATE_KEY = 'f0516e61f8991a915431c7f7b5eab6f6220cfc3d';
 
 // Generate timestamp and hash for Marvel API authentication
 const generateAuthParams = (): string => {
