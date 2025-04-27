@@ -1,6 +1,7 @@
-
+// marvelApi.ts
 import { MD5 } from 'crypto-js';
 
+// Interfaces para o retorno da API
 export interface MarvelCharacter {
   id: number;
   name: string;
@@ -11,33 +12,21 @@ export interface MarvelCharacter {
   };
   comics: {
     available: number;
-    items: Array<{
-      name: string;
-    }>;
+    items: Array<{ name: string }>;
   };
   series: {
     available: number;
-    items: Array<{
-      name: string;
-    }>;
+    items: Array<{ name: string }>;
   };
   stories: {
     available: number;
-    items: Array<{
-      name: string;
-      type: string;
-    }>;
+    items: Array<{ name: string; type: string }>;
   };
   events: {
     available: number;
-    items: Array<{
-      name: string;
-    }>;
+    items: Array<{ name: string }>;
   };
-  urls: Array<{
-    type: string;
-    url: string;
-  }>;
+  urls: Array<{ type: string; url: string }>;
 }
 
 export interface MarvelApiResponse {
@@ -52,19 +41,19 @@ export interface MarvelApiResponse {
   };
 }
 
-// Marvel API credentials
+// Chaves da API Marvel
 const API_BASE_URL = 'https://gateway.marvel.com/v1/public';
-const PUBLIC_KEY = 'YOUR_PUBLIC_KEY'; // You need to replace this with your Marvel API public key
-const PRIVATE_KEY = 'YOUR_PRIVATE_KEY'; // You need to replace this with your Marvel API private key
+const PUBLIC_KEY = 'fec5b9e955afd364fefb2012d17b38db';
+const PRIVATE_KEY = 'f0516e61f8991a915431c7f7b5eab6f6220cfc3d';
 
-// Generate timestamp and hash for Marvel API authentication
+// Gera os parâmetros de autenticação (timestamp, public key e hash)
 const generateAuthParams = (): string => {
   const timestamp = new Date().getTime().toString();
   const hash = MD5(timestamp + PRIVATE_KEY + PUBLIC_KEY).toString();
   return `ts=${timestamp}&apikey=${PUBLIC_KEY}&hash=${hash}`;
 };
 
-// Fetch characters from Marvel API
+// Função para buscar personagens
 export const fetchCharacters = async (
   offset = 0,
   limit = 20,
@@ -72,62 +61,53 @@ export const fetchCharacters = async (
 ): Promise<MarvelApiResponse> => {
   try {
     let url = `${API_BASE_URL}/characters?${generateAuthParams()}&offset=${offset}&limit=${limit}&orderBy=name`;
-    
+
     if (nameStartsWith && nameStartsWith.trim() !== '') {
       url += `&nameStartsWith=${encodeURIComponent(nameStartsWith)}`;
     }
-    
+
     const response = await fetch(url);
     if (!response.ok) {
       throw new Error(`Marvel API error: ${response.status}`);
     }
-    
+
     return await response.json();
   } catch (error) {
     console.error('Error fetching Marvel characters:', error);
-    // Return a mock response for development if API keys are not set
-    if (PUBLIC_KEY === 'YOUR_PUBLIC_KEY' || PRIVATE_KEY === 'YOUR_PRIVATE_KEY') {
-      return getMockCharacters(offset, limit, nameStartsWith);
-    }
-    throw error;
+    return getMockCharacters(offset, limit, nameStartsWith); // Retorna mock em caso de erro
   }
 };
 
-// Fetch a single character by ID
+// Função para buscar um personagem específico pelo ID
 export const fetchCharacterById = async (characterId: number): Promise<MarvelCharacter | null> => {
   try {
     const url = `${API_BASE_URL}/characters/${characterId}?${generateAuthParams()}`;
     const response = await fetch(url);
-    
+
     if (!response.ok) {
       throw new Error(`Marvel API error: ${response.status}`);
     }
-    
+
     const data: MarvelApiResponse = await response.json();
     return data.data.results[0] || null;
   } catch (error) {
     console.error(`Error fetching Marvel character with ID ${characterId}:`, error);
-    // Return mock data for development if API keys are not set
-    if (PUBLIC_KEY === 'YOUR_PUBLIC_KEY' || PRIVATE_KEY === 'YOUR_PRIVATE_KEY') {
-      const mockData = getMockCharacters(0, 100);
-      const character = mockData.data.results.find(char => char.id === characterId);
-      return character || null;
-    }
-    throw error;
+    const mockData = getMockCharacters(0, 100);
+    return mockData.data.results.find(char => char.id === characterId) || null;
   }
 };
 
-// Mock characters for development when API keys are not set
+// Função mock para simular personagens
 const getMockCharacters = (
   offset = 0,
   limit = 20,
   nameStartsWith?: string
 ): MarvelApiResponse => {
-  const mockCharacters: MarvelCharacter[] = [
+  const allCharacters: MarvelCharacter[] = [
     {
       id: 1009220,
       name: "Captain America",
-      description: "Vowing to serve his country any way he could, young Steve Rogers took the super soldier serum to become America's one-man army. Fighting for the red, white and blue for over 60 years, Captain America is the living, breathing symbol of freedom and liberty.",
+      description: "Vowing to serve his country any way he could, young Steve Rogers took the super soldier serum to become America's one-man army.",
       thumbnail: {
         path: "http://i.annihil.us/u/prod/marvel/i/mg/3/50/537ba56d31087",
         extension: "jpg"
@@ -141,7 +121,7 @@ const getMockCharacters = (
     {
       id: 1009368,
       name: "Iron Man",
-      description: "Wounded, captured and forced to build a weapon by his enemies, billionaire industrialist Tony Stark instead created an advanced suit of armor to save his life and escape captivity. Now with a new outlook on life, Tony uses his money and intelligence to make the world a safer, better place as Iron Man.",
+      description: "Billionaire industrialist Tony Stark created an advanced suit of armor to save his life and escape captivity.",
       thumbnail: {
         path: "http://i.annihil.us/u/prod/marvel/i/mg/9/c0/527bb7b37ff55",
         extension: "jpg"
@@ -155,7 +135,7 @@ const getMockCharacters = (
     {
       id: 1009351,
       name: "Hulk",
-      description: "Caught in a gamma bomb explosion while trying to save the life of a teenager, Dr. Bruce Banner was transformed into the incredibly powerful creature called the Hulk. An all too often misunderstood hero, the angrier the Hulk gets, the stronger the Hulk gets.",
+      description: "Caught in a gamma bomb explosion, Dr. Bruce Banner became the Hulk, a powerful but misunderstood hero.",
       thumbnail: {
         path: "http://i.annihil.us/u/prod/marvel/i/mg/5/a0/538615ca33ab0",
         extension: "jpg"
@@ -167,117 +147,172 @@ const getMockCharacters = (
       urls: [{ type: "detail", url: "http://marvel.com/characters/25/hulk" }]
     },
     {
-      id: 1009664,
-      name: "Thor",
-      description: "As the son of Odin, king of Asgard, Thor grew up in a realm where battle was a way of life. After many years, his arrogance forced his father to banish him to Earth. While here, Thor learned humility and helped protect humanity from all manner of threats.",
+      id: 1009618,
+      name: "Scarlet Witch",
+      description: "Wanda Maximoff, known as the Scarlet Witch, is a powerful mutant who can manipulate reality itself using chaos magic. She is a long-time member of the Avengers and a key figure in many Marvel storylines.",
       thumbnail: {
-        path: "http://i.annihil.us/u/prod/marvel/i/mg/d/d0/5269657a74350",
+        path: "http://i.annihil.us/u/prod/marvel/i/mg/1/03/526548a343e4b",
         extension: "jpg"
       },
-      comics: { available: 1820, items: [{ name: "Thor (1966) #1" }] },
-      series: { available: 506, items: [{ name: "Thor (2020 - Present)" }] },
-      stories: { available: 2782, items: [{ name: "Cover #2782", type: "cover" }] },
-      events: { available: 27, items: [{ name: "Acts of Vengeance!" }] },
-      urls: [{ type: "detail", url: "http://marvel.com/characters/1166/thor" }]
+      comics: { available: 850, items: [{ name: "Scarlet Witch (2015) #1" }] },
+      series: { available: 200, items: [{ name: "Scarlet Witch (2015 - 2017)" }] },
+      stories: { available: 1200, items: [{ name: "Story #1200", type: "story" }] },
+      events: { available: 15, items: [{ name: "House of M" }] },
+      urls: [{ type: "detail", url: "http://marvel.com/characters/12/scarlet_witch" }]
     },
     {
-      id: 1009189,
-      name: "Black Widow",
-      description: "Trained as a spy and an assassin, Natasha Romanoff, also known as Black Widow, has changed sides from villain to hero many times over the years.",
+      id: 1009718,
+      name: "Doctor Strange",
+      description: "Stephen Strange was a brilliant but arrogant neurosurgeon. After a car accident severely damaged his hands, he sought out the Ancient One and became the Sorcerer Supreme, protector of Earth against magical and mystical threats.",
       thumbnail: {
-        path: "http://i.annihil.us/u/prod/marvel/i/mg/f/30/50fecad1f395b",
+        path: "http://i.annihil.us/u/prod/marvel/i/mg/c/e0/535fedb6ec137",
         extension: "jpg"
       },
-      comics: { available: 1112, items: [{ name: "Black Widow (2020) #1" }] },
-      series: { available: 266, items: [{ name: "Black Widow (2020 - Present)" }] },
-      stories: { available: 1661, items: [{ name: "Cover #1661", type: "cover" }] },
-      events: { available: 19, items: [{ name: "Age of X" }] },
-      urls: [{ type: "detail", url: "http://marvel.com/characters/6/black_widow" }]
+      comics: { available: 1200, items: [{ name: "Doctor Strange (1968) #1" }] },
+      series: { available: 300, items: [{ name: "Doctor Strange (2015 - 2018)" }] },
+      stories: { available: 2100, items: [{ name: "Story #2100", type: "story" }] },
+      events: { available: 18, items: [{ name: "Infinity War" }] },
+      urls: [{ type: "detail", url: "http://marvel.com/characters/11/doctor_strange" }]
+    },
+    {
+      id: 1010338,
+      name: "Groot",
+      description: "Groot is a sentient, tree-like creature and a member of the Guardians of the Galaxy. He is known for his limited but expressive vocabulary and his powerful regenerative abilities.",
+      thumbnail: {
+        path: "http://i.annihil.us/u/prod/marvel/i/mg/9/00/537ba57ee9938",
+        extension: "jpg"
+      },
+      comics: { available: 300, items: [{ name: "Guardians of the Galaxy (2013) #1" }] },
+      series: { available: 100, items: [{ name: "Guardians of the Galaxy (2013 - 2015)" }] },
+      stories: { available: 400, items: [{ name: "Story #400", type: "story" }] },
+      events: { available: 10, items: [{ name: "Annihilation: Conquest" }] },
+      urls: [{ type: "detail", url: "http://marvel.com/characters/1010338/groot" }]
+    },
+    {
+      id: 1010744,
+      name: "Rocket Raccoon",
+      description: "Rocket Raccoon is a genetically modified raccoon with exceptional marksmanship and tactical skills. He is a key member of the Guardians of the Galaxy, known for his sharp wit and engineering prowess.",
+      thumbnail: {
+        path: "http://i.annihil.us/u/prod/marvel/i/mg/8/c0/5202887448860",
+        extension: "jpg"
+      },
+      comics: { available: 400, items: [{ name: "Rocket Raccoon (2014) #1" }] },
+      series: { available: 120, items: [{ name: "Rocket Raccoon (2014 - 2015)" }] },
+      stories: { available: 500, items: [{ name: "Story #500", type: "story" }] },
+      events: { available: 12, items: [{ name: "Annihilation: Conquest" }] },
+      urls: [{ type: "detail", url: "http://marvel.com/characters/1010744/rocket_raccoon" }]
+    },
+    {
+      id: 1010733,
+      name: "Star-Lord",
+      description: "Peter Quill, known as Star-Lord, is the half-human, half-alien leader of the Guardians of the Galaxy. Armed with his element guns and sense of humor, he defends the galaxy against cosmic threats.",
+      thumbnail: {
+        path: "http://i.annihil.us/u/prod/marvel/i/mg/c/60/4c0035c8a54c7",
+        extension: "jpg"
+      },
+      comics: { available: 550, items: [{ name: "Legendary Star-Lord (2014) #1" }] },
+      series: { available: 150, items: [{ name: "Guardians of the Galaxy (2013 - 2015)" }] },
+      stories: { available: 700, items: [{ name: "Story #700", type: "story" }] },
+      events: { available: 14, items: [{ name: "Infinity Countdown" }] },
+      urls: [{ type: "detail", url: "http://marvel.com/characters/1010733/star-lord" }]
+    },
+    {
+      id: 1010846,
+      name: "Ant-Man",
+      description: "Scott Lang, known as Ant-Man, is a master thief who becomes a hero with the ability to shrink to the size of an ant while retaining his strength. He fights alongside the Avengers and is a key member of the Marvel Universe.",
+      thumbnail: {
+        path: "http://i.annihil.us/u/prod/marvel/i/mg/7/60/5204c9b57b65f",
+        extension: "jpg"
+      },
+      comics: { available: 600, items: [{ name: "Ant-Man (2015) #1" }] },
+      series: { available: 150, items: [{ name: "Ant-Man (2015)" }] },
+      stories: { available: 700, items: [{ name: "Story #700", type: "story" }] },
+      events: { available: 8, items: [{ name: "Infinity War" }] },
+      urls: [{ type: "detail", url: "http://marvel.com/characters/1010846/ant-man" }]
+    },
+    {
+      id: 1009285,
+      name: "Wasp",
+      description: "Hope van Dyne, also known as Wasp, is a brilliant scientist and the daughter of Hank Pym and Janet van Dyne. She possesses the ability to shrink to the size of an insect while retaining superhuman strength, and is a skilled fighter and tactician.",
+      thumbnail: {
+        path: "http://i.annihil.us/u/prod/marvel/i/mg/4/c0/537bafc0acb7a",
+        extension: "jpg"
+      },
+      comics: { available: 250, items: [{ name: "Wasp (2016) #1" }] },
+      series: { available: 80, items: [{ name: "Wasp (2016)" }] },
+      stories: { available: 350, items: [{ name: "Story #350", type: "story" }] },
+      events: { available: 10, items: [{ name: "Secret Wars" }] },
+      urls: [{ type: "detail", url: "http://marvel.com/characters/1009285/wasp" }]
     },
     {
       id: 1009610,
-      name: "Spider-Man",
-      description: "Bitten by a radioactive spider, high school student Peter Parker gained the speed, strength and powers of a spider. Adopting the name Spider-Man, Peter hoped to start a career using his new abilities. Taught that with great power comes great responsibility, Spidey has vowed to use his powers to help people.",
+      name: "Hawkeye",
+      description: "Clint Barton, known as Hawkeye, is a highly skilled marksman and a member of the Avengers. Despite not having superhuman abilities, his precision with a bow and arrow and his tactical skills make him a valuable hero.",
       thumbnail: {
-        path: "http://i.annihil.us/u/prod/marvel/i/mg/3/50/526548a343e4b",
+        path: "http://i.annihil.us/u/prod/marvel/i/mg/f/30/535c524b7a68d",
         extension: "jpg"
       },
-      comics: { available: 4227, items: [{ name: "Amazing Spider-Man (1963) #1" }] },
-      series: { available: 1017, items: [{ name: "Amazing Spider-Man (2018 - Present)" }] },
-      stories: { available: 6134, items: [{ name: "Cover #6134", type: "cover" }] },
-      events: { available: 38, items: [{ name: "Acts of Vengeance!" }] },
-      urls: [{ type: "detail", url: "http://marvel.com/characters/54/spider-man" }]
+      comics: { available: 700, items: [{ name: "Hawkeye (2012) #1" }] },
+      series: { available: 250, items: [{ name: "Hawkeye (2012 - 2015)" }] },
+      stories: { available: 900, items: [{ name: "Story #900", type: "story" }] },
+      events: { available: 13, items: [{ name: "Age of Ultron" }] },
+      urls: [{ type: "detail", url: "http://marvel.com/characters/1009610/hawkeye" }]
     },
     {
-      id: 1009652,
-      name: "Thanos",
-      description: "The Mad Titan Thanos, a melancholy, brooding individual, consumed with the concept of death, sought out personal power and increased strength, endowing himself with cybernetic implants until he became more powerful than any of his brethren.",
+      id: 1009710,
+      name: "Wolverine",
+      description: "James Howlett, better known as Wolverine, is a mutant with enhanced senses, strength, and an accelerated healing factor. His claws are made of indestructible adamantium, making him one of the most dangerous and enduring characters in the Marvel Universe.",
       thumbnail: {
-        path: "http://i.annihil.us/u/prod/marvel/i/mg/6/40/5274137e3e2cd",
+        path: "http://i.annihil.us/u/prod/marvel/i/mg/c/30/5361d8c9337de",
         extension: "jpg"
       },
-      comics: { available: 495, items: [{ name: "Thanos (2019) #1" }] },
-      series: { available: 190, items: [{ name: "Thanos (2019 - Present)" }] },
-      stories: { available: 645, items: [{ name: "Cover #645", type: "cover" }] },
-      events: { available: 8, items: [{ name: "Annihilation" }] },
-      urls: [{ type: "detail", url: "http://marvel.com/characters/58/thanos" }]
+      comics: { available: 2200, items: [{ name: "Wolverine (1988) #1" }] },
+      series: { available: 350, items: [{ name: "Wolverine (2010)" }] },
+      stories: { available: 2900, items: [{ name: "Story #2900", type: "story" }] },
+      events: { available: 20, items: [{ name: "X-Men: Days of Future Past" }] },
+      urls: [{ type: "detail", url: "http://marvel.com/characters/1009710/wolverine" }]
     },
     {
-      id: 1009268,
-      name: "Deadpool",
-      description: "Wade Wilson is a former mercenary and test subject of the Weapon X Program, where he received his regenerative healing factor through the scientific experiments conducted on him.",
+      id: 1009823,
+      name: "Jean Grey",
+      description: "Jean Grey is one of the original X-Men and a powerful telepath with the ability to read minds and manipulate thoughts. As the host of the Phoenix Force, her powers are further amplified, making her one of the most powerful mutants in existence.",
       thumbnail: {
-        path: "http://i.annihil.us/u/prod/marvel/i/mg/9/90/5261a86cacb99",
+        path: "http://i.annihil.us/u/prod/marvel/i/mg/5/80/52631d4a42d58",
         extension: "jpg"
       },
-      comics: { available: 969, items: [{ name: "Deadpool (2019) #1" }] },
-      series: { available: 234, items: [{ name: "Deadpool (2019 - Present)" }] },
-      stories: { available: 1424, items: [{ name: "Cover #1424", type: "cover" }] },
-      events: { available: 20, items: [{ name: "Age of Apocalypse" }] },
-      urls: [{ type: "detail", url: "http://marvel.com/characters/12/deadpool" }]
+      comics: { available: 1200, items: [{ name: "X-Men (1963) #1" }] },
+      series: { available: 300, items: [{ name: "X-Men: Phoenix (2004)" }] },
+      stories: { available: 1500, items: [{ name: "Story #1500", type: "story" }] },
+      events: { available: 15, items: [{ name: "The Phoenix Saga" }] },
+      urls: [{ type: "detail", url: "http://marvel.com/characters/1009823/jean_grey" }]
     },
     {
-      id: 1009697,
-      name: "Vision",
-      description: "The metal monstrosity called Ultron created the synthetic humanoid known as the Vision to use against Ultron's creator, Dr. Henry Pym and Pym's teammates in the Avengers. However, Vision served the Avengers faithfully.",
+      id: 1009468,
+      name: "Cyclops",
+      description: "Scott Summers, known as Cyclops, is a founding member of the X-Men. He has the ability to shoot powerful beams from his eyes, which can only be controlled by special ruby-quartz lenses. As a natural leader, Cyclops is often seen leading the X-Men in battle.",
       thumbnail: {
-        path: "http://i.annihil.us/u/prod/marvel/i/mg/9/d0/5111527040594",
+        path: "http://i.annihil.us/u/prod/marvel/i/mg/1/d0/534c6db983d8b",
         extension: "jpg"
       },
-      comics: { available: 495, items: [{ name: "Vision (2016) #1" }] },
-      series: { available: 151, items: [{ name: "Vision (2016 - Present)" }] },
-      stories: { available: 716, items: [{ name: "Cover #716", type: "cover" }] },
-      events: { available: 9, items: [{ name: "Acts of Vengeance!" }] },
-      urls: [{ type: "detail", url: "http://marvel.com/characters/2447/vision" }]
-    },
-    {
-      id: 1009282,
-      name: "Doctor Strange",
-      description: "As Earth's Sorcerer Supreme, Doctor Strange wields arcane spells and mystical artifacts to defend the planet against malevolent threats.",
-      thumbnail: {
-        path: "http://i.annihil.us/u/prod/marvel/i/mg/5/f0/5261a85a501fe",
-        extension: "jpg"
-      },
-      comics: { available: 925, items: [{ name: "Doctor Strange (2018) #1" }] },
-      series: { available: 267, items: [{ name: "Doctor Strange (2018 - Present)" }] },
-      stories: { available: 1347, items: [{ name: "Cover #1347", type: "cover" }] },
-      events: { available: 17, items: [{ name: "Acts of Vengeance!" }] },
-      urls: [{ type: "detail", url: "http://marvel.com/characters/14/doctor_strange" }]
+      comics: { available: 1300, items: [{ name: "X-Men (1963) #1" }] },
+      series: { available: 280, items: [{ name: "X-Men (2010)" }] },
+      stories: { available: 1700, items: [{ name: "Story #1700", type: "story" }] },
+      events: { available: 18, items: [{ name: "X-Cutioner's Song" }] },
+      urls: [{ type: "detail", url: "http://marvel.com/characters/1009468/cyclops" }]
     }
+    
+    
   ];
 
-  // Filter by name if specified
-  let filteredCharacters = [...mockCharacters];
-  if (nameStartsWith && nameStartsWith.trim() !== '') {
+  let filteredCharacters = allCharacters;
+
+  if (nameStartsWith) {
     const searchTerm = nameStartsWith.toLowerCase();
-    filteredCharacters = mockCharacters.filter(char => 
-      char.name.toLowerCase().startsWith(searchTerm)
+    filteredCharacters = allCharacters.filter(character =>
+      character.name.toLowerCase().startsWith(searchTerm)
     );
   }
-  
-  // Apply pagination
-  const paginatedCharacters = filteredCharacters.slice(offset, offset + limit);
-  
+
   return {
     code: 200,
     status: "Ok",
@@ -285,8 +320,8 @@ const getMockCharacters = (
       offset,
       limit,
       total: filteredCharacters.length,
-      count: paginatedCharacters.length,
-      results: paginatedCharacters,
+      count: Math.min(limit, filteredCharacters.length),
+      results: filteredCharacters.slice(offset, offset + limit),
     },
   };
 };

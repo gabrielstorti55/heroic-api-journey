@@ -154,8 +154,14 @@ const CharacterDetails: React.FC = () => {
             )}
             
             <CharacterStats 
-              comics={character.comics}
-              series={character.series}
+              comics={{
+                ...character.comics,
+                items: 'items' in character.comics && Array.isArray(character.comics.items) ? character.comics.items : [],
+              }}
+              series={{
+                ...character.series,
+                items: 'items' in character.series && Array.isArray(character.series.items) ? character.series.items : [],
+              }}
             />
             
             <CharacterExternalLinks urls={character.urls} />
